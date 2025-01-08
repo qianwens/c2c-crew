@@ -1,29 +1,30 @@
 file_structure_analyze_task:
   description: >
-    Review the code file structure to identify the services' main project folder with the project programming language, main code files, configuration files, and dependency files.
+    Review the code file structure in {folder} to identify the services' main project folder with the project programming language, main code files, configuration files, and dependency files.
     Main code files are the files that contain the main functions of the service or contains the files that initialize the service dependencies.
+    You should use your expertise to reasoning based on the file structure and the file name.
   expected_output: >
-    A list of services with the main project folder, the programming language, the main code files, the configuration files, and the dependency files.
+    A list of services with the main project folder, the programming language, the full path of main code files, the full path of configuration files, and the full path of dependency files.
   agent: code_analyst
 
 service_code_analyze_task:
   description: >
-    Review the service's main code files to identify the main functions of the service.
+    Review the service's main code files {mainFiles} to identify the main functions of the service.
     Generate a service name and description based on the main functions.
   expected_output: >
     An object with the service name and description.
   agent: code_analyst
 
-environment_variables_analyze_task:
+environment_variables_detect_task:
   description: >
-    Review the service's configuration files to identify the environment variables needed to run the service.
+    Review the service's configuration files {configFiles} and main source code files {mainFiles} to identify the environment variables needed to run the service.
   expected_output: >
     A list of environment variables with the key name, description, and default value.
   agent: code_analyst
 
 dependencies_detect_task:
   description: >
-    Review the service's main code files and dependency files to identify the dependent services needed to run the service.
+    Review the service's main code files {mainFiles} and dependency files {dependencyFiles} to identify the dependent services needed to run the service.
   expected_output: >
     A list of dependent services with the service name, service type.
   agent: code_analyst

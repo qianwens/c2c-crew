@@ -3,6 +3,7 @@ import sys
 import warnings
 
 from c2c_crew.crew import C2CCrew
+from c2c_crew.serviceCrew import ServiceCrew
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -16,9 +17,11 @@ def run():
     Run the crew.
     """
     inputs = {
-        'topic': 'AI LLMs'
+        'folder': 'C:\\Users\\qianwens\\testrepos\\example-voting-app'
     }
-    C2CCrew().crew().kickoff(inputs=inputs)
+    folderResult = C2CCrew().crew().kickoff(inputs=inputs)
+    folders_dict_list = [folder.dict() for folder in folderResult.pydantic.folders]
+    results = ServiceCrew().crew().kickoff_for_each(inputs=folders_dict_list)
 
 
 def train():

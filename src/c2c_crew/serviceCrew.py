@@ -6,25 +6,13 @@ from crewai_tools import (
     SerperDevTool,
     WebsiteSearchTool
 )
-from pydantic import BaseModel
-
-
-class serviceFolder(BaseModel):
-    path: str
-    language: str
-    mainFiles: list[str]
-    configFiles: list[str]
-    dependencyFiles: list[str]
-
-class serviceFolders(BaseModel):
-    folders: list[serviceFolder]
 
 # If you want to run a snippet of code before or after the crew starts, 
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 @CrewBase
-class C2CCrew():
+class ServiceCrew():
 	"""C2CCrew crew"""
 	docs_tool = DirectoryReadTool()
 	file_tool = FileReadTool()
@@ -41,7 +29,7 @@ class C2CCrew():
 	def code_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['code_analyst'],
-			tools=[self.docs_tool],
+			tools=[self.docs_tool, self.file_tool, self.search_tool],
 			verbose=True
 		)
 
@@ -59,14 +47,39 @@ class C2CCrew():
 			verbose=True
 		)
 
-	# To learn more about structured task outputs, 
-	# task dependencies, and task callbacks, check out the documentation:
-	# https://docs.crewai.com/concepts/tasks#overview-of-a-task
+
 	@task
-	def file_structure_analyze_task(self) -> Task:
+	def service_code_analyze_task(self) -> Task:
 		return Task(
-			config=self.tasks_config['file_structure_analyze_task'],
-			output_pydantic=serviceFolders,
+			config=self.tasks_config['service_code_analyze_task'],
+			async_execution=True
+		)
+	
+	@task
+	def environment_variables_detect_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['environment_variables_detect_task'],
+			async_execution=True
+		)
+
+	@task
+	def dependencies_detect_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['dependencies_detect_task'],
+			async_execution=True
+		)
+
+	@task
+	def dependencies_analyze_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['dependencies_analyze_task'],
+			context=[self.dependencies_detect_task(), self.environment_variables_detect_task()],
+		)
+
+	@task
+	def azure_services_recommend_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['azure_services_recommend_task'],
 		)
 
 	@crew
@@ -77,7 +90,7 @@ class C2CCrew():
 
 		return Crew(
 			agents=self.agents, # Automatically created by the @agent decorator
-			tasks=[self.file_structure_analyze_task()], # Automatically created by the @task decorator
+			tasks=[self.service_code_analyze_task(), self.dependencies_detect_task(), self.environment_variables_detect_task(), self.dependencies_analyze_task()], # Automatically created by the @task decorator
 			process=Process.sequential,
 			verbose=True,
 			# process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/

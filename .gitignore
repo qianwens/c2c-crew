@@ -1,0 +1,5 @@
+# Ignore environment variables file
+.env
+
+# Ignore Python cache directories
+src/c2c_crew/__pycache__/

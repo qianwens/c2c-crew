@@ -72,6 +72,12 @@ class ChatCrew():
 			config=self.tasks_config['dependencies_analyze_task'],
 		)
 
+	@task
+	def azure_services_recommend_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['azure_services_recommend_task'],
+		)
+
 	@crew
 	def crew(self) -> Crew:
 		"""Creates the C2CCrew crew"""
