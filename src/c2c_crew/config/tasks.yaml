@@ -25,6 +25,7 @@ environment_variables_detect_task:
 dependencies_detect_task:
   description: >
     Review the service's main code files {mainFiles} and dependency files {dependencyFiles} to identify the dependent services needed to run the service.
+    Example dependent services are databases, message queues, and other services.
   expected_output: >
     A list of dependent services with the service name, service type.
   agent: code_analyst

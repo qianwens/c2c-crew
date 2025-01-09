@@ -21,8 +21,9 @@ def run():
     }
     folderResult = C2CCrew().crew().kickoff(inputs=inputs)
     folders_dict_list = [folder.dict() for folder in folderResult.pydantic.folders]
-    results = ServiceCrew().crew().kickoff_for_each(inputs=folders_dict_list)
-
+    async_result = ServiceCrew().crew().kickoff_for_each(inputs=folders_dict_list)
+    for async_result in async_results:
+        print(async_result)
 
 def train():
     """

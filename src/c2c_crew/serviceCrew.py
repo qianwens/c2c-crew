@@ -6,6 +6,31 @@ from crewai_tools import (
     SerperDevTool,
     WebsiteSearchTool
 )
+from pydantic import BaseModel
+
+class ServiceInfo(BaseModel):
+    name: str
+    description: str
+
+class ServiceBinding(BaseModel):
+	serviceName: str
+	serviceType: str
+
+class ServiceBindings(BaseModel):
+	bindings: list[ServiceBinding]
+
+class Environment(BaseModel):
+	keyName: str
+	defaultValue: str
+	description: str
+
+class Environments(BaseModel):
+	environment: list[Environment]
+
+class ServiceBindingWithEnvironments(BaseModel):
+	serviceName: str
+	serviceType: str
+	environments: list[Environment]
 
 # If you want to run a snippet of code before or after the crew starts, 
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -29,7 +54,7 @@ class ServiceCrew():
 	def code_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['code_analyst'],
-			tools=[self.docs_tool, self.file_tool, self.search_tool],
+			tools=[self.file_tool],
 			verbose=True
 		)
 
@@ -52,21 +77,24 @@ class ServiceCrew():
 	def service_code_analyze_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['service_code_analyze_task'],
-			async_execution=True
+			async_execution=True,
+			output_pydantic=ServiceInfo
 		)
 	
 	@task
 	def environment_variables_detect_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['environment_variables_detect_task'],
-			async_execution=True
+			async_execution=True,
+			output_pydantic=Environments
 		)
 
 	@task
 	def dependencies_detect_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['dependencies_detect_task'],
-			async_execution=True
+			async_execution=True,
+			output_pydantic=ServiceBindings
 		)
 
 	@task
@@ -74,6 +102,7 @@ class ServiceCrew():
 		return Task(
 			config=self.tasks_config['dependencies_analyze_task'],
 			context=[self.dependencies_detect_task(), self.environment_variables_detect_task()],
+			output_pydantic=ServiceBindingWithEnvironments
 		)
 
 	@task
