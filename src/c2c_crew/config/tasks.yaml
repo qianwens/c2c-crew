@@ -19,7 +19,9 @@ environment_variables_detect_task:
   description: >
     Review the service's configuration files {configFiles} and main source code files {mainFiles} to identify the environment variables needed to run the service.
   expected_output: >
-    A list of environment variables with the key name, description, and default value.
+    A list of environment variables with the key name, description, and default value. 
+    The key name should be exactly the same as the environment variable name in the code.
+    If there is second level environment variables, consider the project language and framework to decide the key name.
   agent: code_analyst
 
 dependencies_detect_task:
@@ -53,8 +55,19 @@ azure_services_recommend_task:
 
 error_message_analyze_task:
   description: >
-    Review the error message to identify the error type, the potential reason and how to search the code for the error.
+    Review the error message to identify the root cause of the issue. 
+    The error can be caused by the code logic, or the environment configuration. 
+    You should carefully check if the error message is caused by the incorrect deploy architecture first.
+    You should take the error message as the input and analyze the code and the deploy architecture to find the root cause.
   expected_output: >
-    An report of the error message, the root cause, and the code search rule.
+    An report of the error message, the root cause, and the solution.
   agent: error_analyst
 
+customer_support_task:
+  description: >
+    The user has a question about deploying the service to the cloud. The project folder is {folder} and the deploy architecture is {architecture}.
+    Given the user's question {question}, find the right agent to solve the issue and provide the solution to customer.
+    You should provide sufficient and comprehensive information to the agent including the project folder, deploy architecture, and the user's question.
+  expected_output: >
+    A message to the customer with the question analysis and solution. 
+  agent: customer_support

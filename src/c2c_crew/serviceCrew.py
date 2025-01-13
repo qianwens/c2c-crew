@@ -54,7 +54,6 @@ class ServiceCrew():
 	def code_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['code_analyst'],
-			tools=[self.file_tool],
 			verbose=True
 		)
 
@@ -78,7 +77,8 @@ class ServiceCrew():
 		return Task(
 			config=self.tasks_config['service_code_analyze_task'],
 			async_execution=True,
-			output_pydantic=ServiceInfo
+			output_pydantic=ServiceInfo,
+			tools=[self.file_tool],
 		)
 	
 	@task
@@ -86,7 +86,8 @@ class ServiceCrew():
 		return Task(
 			config=self.tasks_config['environment_variables_detect_task'],
 			async_execution=True,
-			output_pydantic=Environments
+			output_pydantic=Environments,
+			tools=[self.file_tool],
 		)
 
 	@task
@@ -94,7 +95,8 @@ class ServiceCrew():
 		return Task(
 			config=self.tasks_config['dependencies_detect_task'],
 			async_execution=True,
-			output_pydantic=ServiceBindings
+			output_pydantic=ServiceBindings,
+			tools=[self.file_tool],
 		)
 
 	@task

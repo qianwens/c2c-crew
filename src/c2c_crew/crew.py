@@ -41,7 +41,6 @@ class C2CCrew():
 	def code_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['code_analyst'],
-			tools=[self.docs_tool],
 			verbose=True
 		)
 
@@ -67,6 +66,7 @@ class C2CCrew():
 		return Task(
 			config=self.tasks_config['file_structure_analyze_task'],
 			output_pydantic=serviceFolders,
+			tools=[self.docs_tool],
 		)
 
 	@crew
