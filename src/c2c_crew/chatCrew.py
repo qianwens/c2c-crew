@@ -31,7 +31,8 @@ class ChatCrew():
 	def error_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['error_analyst'],
-			verbose=True
+			verbose=True,
+			tools=[self.docs_tool, self.file_tool],
 		)
 	
 	@agent
@@ -41,7 +42,29 @@ class ChatCrew():
 			verbose=True,
 			allow_delegation=True,
 		)
-
+	
+	@agent
+	def code_analyst(self) -> Agent:
+		return Agent(
+			config=self.agents_config['code_analyst'],
+			verbose=True
+		)
+	
+	@agent
+	def azure_architect(self) -> Agent:
+		return Agent(
+			config=self.agents_config['azure_architect'],
+			verbose=True
+		)
+	
+	@agent
+	def bicep_analyst(self) -> Agent:
+		return Agent(
+			config=self.agents_config['bicep_analyst'],
+			tools=[self.docs_tool, self.file_tool],
+			verbose=True
+		)
+	
 	# To learn more about structured task outputs, 
 	# task dependencies, and task callbacks, check out the documentation:
 	# https://docs.crewai.com/concepts/tasks#overview-of-a-task
@@ -74,7 +97,7 @@ class ChatCrew():
 		# https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 
 		return Crew(
-			agents=self.agents, # Automatically created by the @agent decorator
+			agents=[self.customer_support(), self.error_analyst(), self.bicep_analyst()], # Automatically created by the @agent decorator
 			tasks=[self.customer_support_task()],# Automatically created by the @task decorator
 			process=Process.sequential,
 			verbose=True,

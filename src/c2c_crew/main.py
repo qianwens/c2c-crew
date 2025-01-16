@@ -34,7 +34,7 @@ def run():
                 return
             with open(azure_json_path, 'r') as file:
                 azure_data = json.load(file)
-                chatResult = ChatCrew().crew().kickoff(inputs={"folder": folder, "question": user_input, "architecture": azure_data})
+                chatResult = ChatCrew().crew().kickoff(inputs={"folder": folder, "question": user_input, "bicep": os.path.join(folder, 'infra')})
                 print("Chatbot:", chatResult)
     inputs = {
         'folder': 'C:\\Users\\qianwens\\testrepo\\dvpwa'

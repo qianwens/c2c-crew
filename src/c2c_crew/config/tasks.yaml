@@ -59,15 +59,17 @@ error_message_analyze_task:
     The error can be caused by the code logic, or the environment configuration. 
     You should carefully check if the error message is caused by the incorrect deploy architecture first.
     You should take the error message as the input and analyze the code and the deploy architecture to find the root cause.
+    Possible deployment problems include incorrect environment variables, incorrect dependent services, or incorrect service configuration.
   expected_output: >
     An report of the error message, the root cause, and the solution.
   agent: error_analyst
 
 customer_support_task:
   description: >
-    The user has a question about deploying the service to the cloud. The project folder is {folder} and the deploy architecture is {architecture}.
+    The user has a question about deploying the service to the cloud. The project folder is {folder} and the bicep folder is {bicep}.
     Given the user's question {question}, find the right agent to solve the issue and provide the solution to customer.
     You should provide sufficient and comprehensive information to the agent including the project folder, deploy architecture, and the user's question.
+    For the runtime exception, you should ask error_analyst to help diagnostic the error message and ask bicep_analyst to help diagnostic the bicep file if it could be caused by incorrect configuration.
   expected_output: >
     A message to the customer with the question analysis and solution. 
   agent: customer_support
